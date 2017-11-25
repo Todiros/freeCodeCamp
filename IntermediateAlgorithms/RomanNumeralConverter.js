@@ -1,3 +1,7 @@
+/* jshint esversion: 6 */
+/* jshint -W097 */
+'use strict';
+
 /* 
    I, V,  X,  L,  C,   D,   M
    1, 5, 10, 50, 100, 500, 1000 
@@ -12,36 +16,34 @@ function flatten(arr)  {
 
 // breaks down arabic numbers into the core roman numbers - 1, 5, 10, 50, etc.
 function checker (min, max, number) {
-    const MARGIN = Math.ceil(max * 0.1); 
+    const MARGIN = number === 40 ? (Math.ceil(max * 0.1) * 2) : Math.ceil(max * 0.1); 
     let diff = 1 + max - number;
     let currentResult = [];
+    let tempResult = '';
 
     if (diff > MARGIN) {
-        // TODO: maybe add the arabic numbers into an array and then pass it to arabicToRoman()?
-        currentResult.push(arabicToRoman(min));
+        tempResult = arabicToRoman(min);
         number -= min;
-        currentResult.push(arabicToRoman(number));
+        tempResult += arabicToRoman(number);
     } else {
-        /*
-            TODO: If the equations goes to right,
-            aka current number is smaller than the right with ~10%
-            Hint: reversed adding order!
-
-        */
+        tempResult = arabicToRoman(max + 1);
+        number = 1 + max - number;
+        tempResult += arabicToRoman(number);
+        tempResult = tempResult.split('').reverse().join('');
     }
 
+    currentResult.push(tempResult);
     return currentResult;
 }
 
 // converts the base numbers from arabic to roman
 function arabicToRoman(number) {
-    let diff = 0; 
-    let romanResult = "";
+    let romanResult = '';
     let currentRomanLetter = '';
 
     if (number >= 1 && number <= 4) {
         if (number === 1) {
-            romanResult = "I";
+            romanResult = 'I';
         } else {
             currentRomanLetter = checker(1, 4, number);
             romanResult = currentRomanLetter;
@@ -49,45 +51,48 @@ function arabicToRoman(number) {
         
     } else if (number >= 5 && number <= 9) {
         if (number === 5) {
-            romanResult = "V";
+            romanResult = 'V';
         } else {
             currentRomanLetter = checker(5, 9, number);
             romanResult = currentRomanLetter;
         }
         
-    } else if (number >=10 && number <= 49) {
+    } else if (number >= 10 && number <= 49) {
         if (number === 10) {
-            romanResult = "X";
+            romanResult = 'X';
         } else {
             currentRomanLetter = checker(10, 49, number);
             romanResult = currentRomanLetter;
         }
-    } else if (number >=50 && number <= 99) {
+    } else if (number >= 50 && number <= 99) {
         if (number === 50) {
-            romanResult = "L";
+            romanResult = 'L';
         } else {
             currentRomanLetter = checker(50, 99, number);
             romanResult = currentRomanLetter;
         }
         
-    } else if (number >=100 && number <= 499) {
+    } else if (number >= 100 && number <= 499) {
         if (number === 100) {
-            romanResult = "C";
+            romanResult = 'C';
         } else {
             currentRomanLetter = checker(100, 499, number);
             romanResult = currentRomanLetter;
         }
         
-    } else if (number >=500 && number <= 999) {
+    } else if (number >= 500 && number <= 999) {
         if (number === 500) {
-            romanResult = "D";
+            romanResult = 'D';
         } else {
             currentRomanLetter = checker(500, 999, number);
             romanResult = currentRomanLetter;
         }
-        
-    } else /* 1000 */ {
-        romanResult = "M";
+		
+    } else if (number >= 1000) {
+        while(number / 1000 >= 1) {
+            romanResult += 'M';
+            number -= 1000;
+        }
     }
 
     return romanResult;
@@ -110,14 +115,12 @@ function convertToRoman(num) {
         counter *= 10;
     }
 
-    breakDown.forEach((number, i, arr) => {
+    breakDown.forEach((number) => {
         result.unshift(arabicToRoman(number));
     });
 
-
     result = flatten(result).join('');
-    console.log(result);
     return result;
 }
 
-convertToRoman(36);
+convertToRoman(649);
