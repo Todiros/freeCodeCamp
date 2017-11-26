@@ -10,13 +10,17 @@
 // Magic
 function flatten(arr)  {
     return arr.reduce(function (flat, toFlatten) {
+        // checks if the element in the array is another array
+        // it calls flatten() recursively if it is, concates the element toFlatten, if it isn't
         return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
     }, []);
 }
 
 // breaks down arabic numbers into the core roman numbers - 1, 5, 10, 50, etc.
 function checker (min, max, number) {
+    // the forumla does not work for the number 40 where the difference is 10, while the margin only 5 so it has to be doubled
     const MARGIN = number === 40 ? (Math.ceil(max * 0.1) * 2) : Math.ceil(max * 0.1); 
+    // +1 so the max becomes 10, 50, 100, etc. instead of 9, 49, 99 
     let diff = 1 + max - number;
     let currentResult = [];
     let tempResult = '';
@@ -29,6 +33,7 @@ function checker (min, max, number) {
         tempResult = arabicToRoman(max + 1);
         number = 1 + max - number;
         tempResult += arabicToRoman(number);
+        // reverses the string so that LX becomes XL (40)
         tempResult = tempResult.split('').reverse().join('');
     }
 
@@ -89,6 +94,7 @@ function arabicToRoman(number) {
         }
 		
     } else if (number >= 1000) {
+        // 9000 = MMMMMMMMM
         while(number / 1000 >= 1) {
             romanResult += 'M';
             number -= 1000;
@@ -107,6 +113,7 @@ function convertToRoman(num) {
     let result = [];
 
     let counter = 1;
+    // 3976 = 3000 + 900 + 70 + 6
     while (remainder >= 1) {
         let digit = remainder % 10;
         remainder /= 10;
@@ -115,6 +122,7 @@ function convertToRoman(num) {
         counter *= 10;
     }
 
+    // Insert each roman number part into the from of the array
     breakDown.forEach((number) => {
         result.unshift(arabicToRoman(number));
     });
@@ -123,4 +131,4 @@ function convertToRoman(num) {
     return result;
 }
 
-convertToRoman(649);
+convertToRoman(3976); // MMMCMLXXVI
